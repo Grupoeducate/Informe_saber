@@ -1,0 +1,38 @@
+{
+  "puntaje_global": [
+    { "nivel": "Insuficiente", "min": 0, "max": 191, "color": "#d9534f" },
+    { "nivel": "Mínimo", "min": 192, "max": 269, "color": "#f0ad4e" },
+    { "nivel": "Satisfactorio", "min": 270, "max": 349, "color": "#5bc0de" },
+    { "nivel": "Avanzado", "min": 350, "max": 500, "color": "#5cb85c" }
+  ],
+  "lectura_critica": [
+    { "nivel": "1 - Insuficiente", "min": 0, "max": 35.99, "color": "#d9534f" },
+    { "nivel": "2 - Mínimo", "min": 36, "max": 50.98, "color": "#f0ad4e" },
+    { "nivel": "3 - Satisfactorio", "min": 51, "max": 65.99, "color": "#5bc0de" },
+    { "nivel": "4 - Avanzado", "min": 66, "max": 100, "color": "#5cb85c" }
+  ],
+  "matematicas": [
+    { "nivel": "1 - Insuficiente", "min": 0, "max": 35.99, "color": "#d9534f" },
+    { "nivel": "2 - Mínimo", "min": 36, "max": 50.98, "color": "#f0ad4e" },
+    { "nivel": "3 - Satisfactorio", "min": 51, "max": 70.99, "color": "#5bc0de" },
+    { "nivel": "4 - Avanzado", "min": 71, "max": 100, "color": "#5cb85c" }
+  ],
+  "sociales_ciudadanas": [
+    { "nivel": "1 - Insuficiente", "min": 0, "max": 40.99, "color": "#d9534f" },
+    { "nivel": "2 - Mínimo", "min": 41, "max": 55.98, "color": "#f0ad4e" },
+    { "nivel": "3 - Satisfactorio", "min": 56, "max": 70.99, "color": "#5bc0de" },
+    { "nivel": "4 - Avanzado", "min": 71, "max": 100, "color": "#5cb85c" }
+  ],
+  "ciencias_naturales": [
+    { "nivel": "1 - Insuficiente", "min": 0, "max": 40.99, "color": "#d9534f" },
+    { "nivel": "2 - Mínimo", "min": 41, "max": 55.98, "color": "#f0ad4e" },
+    { "nivel": "3 - Satisfactorio", "min": 56, "max": 70.99, "color": "#5bc0de" },
+    { "nivel": "4 - Avanzado", "min": 71, "max": 100, "color": "#5cb85c" }
+  ],
+  "ingles": [
+    { "nivel": "1 - Insuficiente", "min": 0, "max": 36.99, "color": "#d9534f" },
+    { "nivel": "2 - Mínimo", "min": 37, "max": 57.98, "color": "#f0ad4e" },
+    { "nivel": "3 - Satisfactorio", "min": 58, "max": 70.99, "color": "#5bc0de" },
+    { "nivel": "4 - Avanzado", "min": 71, "max": 100, "color": "#5cb85c" }
+  ]
+}
