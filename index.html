@@ -4,177 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruta Saber | Grupo Edúcate Colombia</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --font-family: 'Barlow Condensed', sans-serif;
-            --primary-color: #0D1F3C;
-            --secondary-color: #5D6D7E;
-            --accent-color: #007BFF;
-            --highlight-color: #E63946;
-            --background-color: #F4F6F9;
-            --text-color: #343A40;
-        }
-
-        body {
-            font-family: var(--font-family);
-            background-color: var(--background-color);
-            color: var(--text-color);
-            margin: 0;
-            overflow-x: hidden;
-        }
-
-        .navbar {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 60px;
-            background-color: #fff;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .navbar .logo img {
-            height: 40px;
-        }
-
-        .navbar .access-btn {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 10px 25px;
-            border-radius: 20px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: background-color 0.3s;
-        }
-
-        .navbar .access-btn:hover {
-            background-color: var(--accent-color);
-        }
-
-        .hero-section {
-            display: grid;
-            grid-template-columns: 1fr 1.1fr;
-            align-items: start; /* MODIFICADO: Alinea el contenido arriba */
-            min-height: calc(100vh - 81px);
-            padding: 40px 60px;
-            background-color: #fff;
-        }
-
-        .hero-content {
-            padding-right: 40px;
-            padding-top: 20px; /* Añade un poco de espacio superior */
-        }
-
-        .hero-content .platform-name {
-            font-size: 64px;
-            font-weight: 700;
-            color: var(--primary-color);
-        }
-        
-        .hero-content .platform-name span {
-            color: var(--highlight-color);
-        }
-
-        .hero-content .subtitle {
-            font-size: 22px;
-            line-height: 1.6;
-            color: var(--secondary-color);
-            margin: 20px 0;
-            max-width: 500px;
-        }
-        
-        .login-form {
-            margin-top: 30px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            max-width: 400px;
-        }
-        
-        .login-form input {
-            padding: 15px;
-            font-size: 18px;
-            font-family: var(--font-family);
-            border: 1px solid #ccc;
-            border-radius: 8px;
-        }
-
-        .login-form button {
-            padding: 15px;
-            font-size: 20px;
-            font-family: var(--font-family);
-            font-weight: 600;
-            background-color: var(--accent-color);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .login-form button:hover {
-            background-color: var(--primary-color);
-        }
-
-        .hero-visual {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start; /* MODIFICADO: Alinea la imagen arriba */
-            height: 100%;
-        }
-        
-        .hero-visual img {
-            max-width: 85%; /* MODIFICADO: Reduce el tamaño de la imagen */
-            height: auto;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-        }
-
-        /* Responsive */
-        @media (max-width: 900px) {
-            .hero-section {
-                grid-template-columns: 1fr;
-                text-align: center;
-                min-height: auto;
-            }
-            .hero-content {
-                padding-right: 0;
-                order: 2;
-            }
-            .hero-visual {
-                order: 1;
-                margin-bottom: 40px;
-                align-items: center;
-            }
-            .login-form, .hero-content .subtitle {
-                margin-left: auto;
-                margin-right: auto;
-            }
-        }
-        @media (max-width: 600px) {
-            .navbar { padding: 15px 20px; }
-            .hero-section { padding: 30px 20px; }
-            .hero-content .platform-name { font-size: 48px; }
-            .hero-content .subtitle { font-size: 18px; }
-        }
-
-    </style>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
     <nav class="navbar">
         <div class="logo">
-            <!-- MODIFICADO: La ruta del logo apunta a Logogec.png -->
             <img src="imagenes/Logogec.png" alt="Grupo Edúcate Colombia">
         </div>
         <a href="#login-form" class="access-btn">Acceder</a>
     </nav>
-
     <main class="hero-section">
         <div class="hero-content">
             <h1 class="platform-name">Ruta <span>Saber.</span></h1>
@@ -182,38 +20,16 @@
                 Accede a tus datos, enfócate en la meta. Identifica fortalezas y diseña planes de mejoramiento accionables para llevar a tu institución al siguiente nivel.
             </p>
             <form id="login-form" class="login-form">
-                <input type="text" id="dane" placeholder="Código DANE o Usuario Admin" required>
-                <input type="password" id="clave" placeholder="Clave de 4 dígitos" required>
+                <input type="text" id="user" placeholder="Código DANE o Usuario Admin" required>
+                <input type="password" id="pass" placeholder="Clave" required>
                 <button type="submit">Ingresar a mi Ruta</button>
-                <div id="error-message" style="color: var(--danger-color); text-align: center; font-weight: 600; min-height: 20px;"></div>
+                <div id="error-message"></div>
             </form>
         </div>
         <div class="hero-visual">
-            <img src="imagenes/Fondo.png" alt="Análisis de datos educativos">
+            <img src="imagenes/fondo.png" alt="Análisis de datos educativos">
         </div>
     </main>
-    
-    <script>
-        // Lógica de login básica (placeholder)
-        document.getElementById('login-form').addEventListener('submit', function(event) {
-            event.preventDefault();
-            const dane = document.getElementById('dane').value;
-            const clave = document.getElementById('clave').value;
-            const errorMessage = document.getElementById('error-message');
-
-            if (dane === "80417611" && clave === "Jw1020++") {
-                errorMessage.textContent = "";
-                alert("Acceso de Administrador Concedido. Redirigiendo al dashboard...");
-                // En la versión final: window.location.href = 'dashboard.html';
-            } else if (dane === "194001001085" && clave === "1598") {
-                 errorMessage.textContent = "";
-                alert("Acceso de Directivo Concedido. Redirigiendo al informe...");
-                // En la versión final: window.location.href = `reporte.html?dane=${dane}`;
-            } else {
-                errorMessage.textContent = "Usuario o clave incorrectos.";
-            }
-        });
-    </script>
-
+    <script src="js/script.js"></script>
 </body>
 </html>
