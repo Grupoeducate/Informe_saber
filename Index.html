@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" style="scroll-behavior: smooth;">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Informe Directivo - I.E. Luis Carlos Galán Sarmiento - Grupo 11° A-JU</title>
+    <title>Informe Directivo - I.E. Luis Carlos Galán Sarmiento</title>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -51,45 +51,56 @@
         }
         .report-header img { height: 40px; }
         .report-header h2 { font-size: 24px; font-weight: 600; margin: 0; }
+        
+        /* --- NUEVO MENU DE NAVEGACIÓN --- */
+        .report-nav {
+            position: sticky;
+            top: 0;
+            background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(5px);
+            z-index: 100;
+            padding: 10px 60px;
+            border-bottom: 1px solid #dee2e6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .report-nav a {
+            text-decoration: none;
+            color: var(--primary-color);
+            font-weight: 600;
+            font-size: 16px;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .report-nav a:hover {
+            background-color: var(--accent-color);
+            color: white;
+        }
 
         .cover-section {
-            min-height: 80vh;
+            min-height: 85vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             text-align: center;
         }
-        .cover-section .brand-name {
-            font-size: 72px;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 20px;
-        }
+        .cover-section .brand-name { font-size: 72px; font-weight: 700; color: var(--primary-color); margin-bottom: 20px; }
         .cover-section h1 { font-size: 52px; color: var(--text-color); margin: 0; }
         .cover-section h3 { font-size: 32px; color: var(--secondary-color); margin: 20px 0; font-weight: 500; }
         .cover-section .group-name { font-size: 36px; color: var(--accent-color); font-weight: 600; border: 2px solid var(--accent-color); padding: 10px 20px; border-radius: 10px; }
-
-        .section-title {
-            font-size: 42px;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-top: 0;
-            margin-bottom: 25px;
-            border-left: 8px solid var(--accent-color);
-            padding-left: 15px;
-        }
-        
+        .section-title { font-size: 42px; font-weight: 700; color: var(--primary-color); margin-top: 20px; margin-bottom: 25px; border-left: 8px solid var(--accent-color); padding-left: 15px; }
         .grid-layout { display: grid; gap: 25px; }
         .grid-2-cols { grid-template-columns: 1fr 1fr; }
         .grid-1-col { grid-template-columns: 1fr; }
-
         .summary-box { padding: 15px; border-radius: 8px; background-color: #f8f9fa; border-left: 5px solid #dee2e6;}
         .summary-box h3 { font-size: 22px; color: var(--accent-color); margin-top: 0; border-bottom: 2px solid var(--accent-color); padding-bottom: 8px; margin-bottom: 10px; }
-
         .panel h4 { font-size: 20px; color: var(--primary-color); text-align: center; margin-bottom: 10px; }
         .chart-container { width: 100%; min-height: 350px; }
-
         table { width: 100%; border-collapse: collapse; font-size: 16px; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #dee2e6; }
         thead th { background-color: var(--primary-color); color: var(--header-color); font-weight: 600; }
@@ -97,7 +108,6 @@
         .evo-pos { color: var(--success-color); font-weight: 600; }
         .evo-neg { color: var(--danger-color); font-weight: 600; }
         .evo-neu { color: var(--secondary-color); }
-
         .desglose-layout { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 30px; }
         .desglose-charts-container { display: flex; flex-direction: column; gap: 20px; }
         .desglose-analysis-container { background-color: #f8f9fa; padding: 20px; border-radius: 8px; }
@@ -106,21 +116,20 @@
         .analysis-box ul { list-style-position: outside; padding-left: 20px; margin: 0; }
         .analysis-box li { margin-bottom: 15px; line-height: 1.4; font-size: 16px; }
         .analysis-box .recommendation { font-size: 15px; color: var(--accent-color); font-weight: 600; background-color: #e6f2ff; padding: 8px; border-radius: 4px; display: block; margin-top: 8px; }
-
         .final-quote { text-align: center; font-size: 32px; font-weight: 600; color: var(--primary-color); padding: 50px 0; }
-        
         .report-footer { text-align: center; padding: 20px; font-size: 14px; color: var(--secondary-color); }
 
         @media (max-width: 900px) {
             section { padding: 25px 30px; }
-            .report-header { padding: 15px 30px; }
+            .report-header, .report-nav { padding-left: 30px; padding-right: 30px; }
             .section-title { font-size: 32px; }
             .grid-2-cols, .desglose-layout { grid-template-columns: 1fr; }
         }
         @media (max-width: 600px) {
             section { padding: 20px 15px; }
             .report-header { padding: 10px 15px; flex-direction: column; height: auto; gap: 10px; }
-            .report-header h2 { font-size: 18px; }
+            .report-header h2 { font-size: 18px; text-align: center;}
+            .report-nav { padding-left: 15px; padding-right: 15px; }
             .cover-section .brand-name { font-size: 48px; }
             .cover-section h1 { font-size: 36px; }
             .cover-section h3 { font-size: 24px; }
@@ -138,15 +147,27 @@
             <h2>I.E. Luis Carlos Galán Sarmiento | Informe Directivo</h2>
         </header>
 
+        <nav class="report-nav">
+            <a href="#resumen">Resumen</a>
+            <a href="#panorama">Panorama</a>
+            <a href="#areas">Áreas</a>
+            <a href="#estudiantes">Estudiantes</a>
+            <a href="#desglose-lc">L. Crítica</a>
+            <a href="#desglose-mat">Matemáticas</a>
+            <a href="#desglose-soc">Sociales</a>
+            <a href="#desglose-cn">C. Naturales</a>
+            <a href="#desglose-ing">Inglés</a>
+        </nav>
+
         <main>
-            <section class="cover-section">
+            <section class="cover-section" id="portada">
                 <div class="brand-name">GRUPO EDÚCATE COLOMBIA</div>
                 <h1>Análisis Estratégico Longitudinal</h1>
                 <h3>I.E. Luis Carlos Galán Sarmiento - Sede Principal</h3>
                 <div class="group-name">Grupo 11° A-JU</div>
             </section>
             
-            <section>
+            <section id="resumen">
                 <h2 class="section-title">Resumen Ejecutivo</h2>
                 <div class="grid-layout grid-2-cols">
                     <div class="summary-box"><h3>Reto Histórico</h3><p>A pesar de una notable tendencia de mejora en los últimos 4 años, la institución ha operado cerca o ligeramente por debajo del promedio nacional. El reto ha sido consolidar un rendimiento que supere consistentemente la media de Colombia.</p></div>
@@ -156,7 +177,7 @@
                 </div>
             </section>
             
-            <section>
+            <section id="panorama">
                 <h2 class="section-title">Panorama General: Contexto y Evolución</h2>
                 <div class="grid-layout grid-1-col">
                     <div class="panel"><h4>Puntaje Global Histórico: Colegio vs. Colombia (4 Años)</h4><div class="chart-container" id="historialChart"></div></div>
@@ -164,107 +185,70 @@
                 </div>
             </section>
 
-            <section>
+            <section id="areas">
                 <h2 class="section-title">Visión General de Evolución por Áreas</h2>
                 <table><thead><tr><th>Área de Conocimiento</th><th>Puntaje Prueba Inicial (Sigma)</th><th>Puntaje Prueba Final (PI)</th><th>Evolución Neta</th></tr></thead>
                 <tbody><tr><td>Lectura Crítica</td><td>65.5</td><td>54.4</td><td class="evo-neg">-11.1</td></tr><tr><td>Matemáticas</td><td>58.9</td><td>48.6</td><td class="evo-neg">-10.3</td></tr><tr><td>Sociales y Ciudadanas</td><td>43.7</td><td>50.3</td><td class="evo-pos">+6.6</td></tr><tr><td>Ciencias Naturales</td><td>43.8</td><td>50.1</td><td class="evo-pos">+6.3</td></tr><tr><td>Inglés</td><td>44.2</td><td>42.0</td><td class="evo-neg">-2.2</td></tr><tr style="font-weight:bold; background-color: #e9ecef;"><td>PUNTAJE GLOBAL</td><td>261.5</td><td>250.9</td><td class="evo-neg">-10.6</td></tr></tbody></table>
             </section>
 
-            <section>
+            <section id="estudiantes">
                 <h2 class="section-title">Proyección: Estudiantes Clave</h2>
                 <div class="grid-layout grid-2-cols">
                     <div>
                         <h4>Top 10 Estudiantes Destacados</h4>
                         <table><thead><tr><th>Nombre</th><th>Puntaje</th><th>Evolución</th></tr></thead>
                         <tbody>
-                            <tr><td>ROSMARY E. CAMICO N.</td><td>346.9</td><td class="evo-pos">+7.2</td></tr>
-                            <tr><td>HAIDER Y. CUESTA M.</td><td>302.8</td><td class="evo-neu">N/A</td></tr>
-                            <tr><td>SAMUEL ALVAREZ T.</td><td>297.4</td><td class="evo-neu">N/A</td></tr>
-                            <tr><td>JHAN S. ACUÑA R.</td><td>282.8</td><td class="evo-pos">+12.0</td></tr>
-                            <tr><td>ANTHONI R. GONZALEZ P.</td><td>279.1</td><td class="evo-pos">+6.8</td></tr>
+                            <tr><td>ROSMARY E. CAMICO N.</td><td>346.9</td><td class="evo-pos">+7.2</td></tr><tr><td>HAIDER Y. CUESTA M.</td><td>302.8</td><td class="evo-neu">N/A</td></tr><tr><td>SAMUEL ALVAREZ T.</td><td>297.4</td><td class="evo-neu">N/A</td></tr><tr><td>JHAN S. ACUÑA R.</td><td>282.8</td><td class="evo-pos">+12.0</td></tr><tr><td>ANTHONI R. GONZALEZ P.</td><td>279.1</td><td class="evo-pos">+6.8</td></tr>
+                            <tr><td>MARY A. ISAZA A.</td><td>273.6</td><td class="evo-neu">N/A</td></tr><tr><td>HANZ S. LEON H.</td><td>259.9</td><td class="evo-pos">+11.3</td></tr><tr><td>LEIDY P. CRUZ G.</td><td>256.4</td><td class="evo-neg">-23.3</td></tr><tr><td>MAIKOL A. MOTTA V.</td><td>256.2</td><td class="evo-pos">+30.9</td></tr><tr><td>HELEN S. PILOTO D.</td><td>251.9</td><td class="evo-neu">N/A</td></tr>
                         </tbody></table>
                     </div>
                     <div>
                         <h4>Top 5 de Atención Prioritaria</h4>
                         <table><thead><tr><th>Nombre</th><th>Puntaje</th><th>Evolución</th></tr></thead>
                         <tbody>
-                            <tr><td>MELANIE V. CIFUENTES V.</td><td>18.5</td><td class="evo-neg">-228.4</td></tr>
-                            <tr><td>MICHELL N. VEINTEMILLO P.</td><td>199.0</td><td class="evo-neu">N/A</td></tr>
-                            <tr><td>SANTIAGO ROJAS G.</td><td>237.2</td><td class="evo-neu">N/A</td></tr>
-                            <tr><td>HELEN S. PILOTO D.</td><td>251.9</td><td class="evo-neu">N/A</td></tr>
-                            <tr><td>MAIKOL A. MOTTA V.</td><td>256.2</td><td class="evo-pos">+30.9</td></tr>
+                            <tr><td>MELANIE V. CIFUENTES V.</td><td>18.5</td><td class="evo-neg">-228.4</td></tr><tr><td>MICHELL N. VEINTEMILLO P.</td><td>199.0</td><td class="evo-neu">N/A</td></tr><tr><td>SANTIAGO ROJAS G.</td><td>237.2</td><td class="evo-neu">N/A</td></tr><tr><td>HELEN S. PILOTO D.</td><td>251.9</td><td class="evo-neu">N/A</td></tr><tr><td>MAIKOL A. MOTTA V.</td><td>256.2</td><td class="evo-pos">+30.9</td></tr>
                         </tbody></table>
                     </div>
                 </div>
             </section>
 
-            <section>
+            <section id="desglose-lc">
                 <h2 class="section-title">Desglose Longitudinal: Lectura Crítica</h2>
                 <div class="desglose-layout">
-                    <div class="desglose-charts-container">
-                        <div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="lcChartEvo"></div></div>
-                        <div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="lcChartFinal"></div></div>
-                    </div>
-                    <div class="desglose-analysis-container">
-                        <div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Base de Comprensión:</strong> 'Identificar y ubicar información' se mantiene como la de mayor puntaje relativo, indicando una base en comprensión literal.</li></ul></div>
-                        <div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Caída Crítica en Reflexión:</strong> 'Evaluar y reflexionar' es la más baja y la que más descendió. Es el foco principal de intervención.<span class="recommendation">ACCIÓN (Fase 3 y 4): Implementar debates y talleres de escritura argumentativa.</span></li><li><strong>Debilidad en Relación:</strong> La habilidad para 'Relacionar e interpretar' también muestra una caída importante.<span class="recommendation">ACCIÓN (Fase 2): Realizar sesiones de modelado de pensamiento para preguntas complejas.</span></li></ul></div>
-                    </div>
+                    <div class="desglose-charts-container"><div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="lcChartEvo"></div></div><div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="lcChartFinal"></div></div></div>
+                    <div class="desglose-analysis-container"><div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Base de Comprensión:</strong> 'Identificar y ubicar información' se mantiene como la de mayor puntaje relativo, indicando una base en comprensión literal.</li></ul></div><div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Caída Crítica en Reflexión:</strong> 'Evaluar y reflexionar' es la más baja y la que más descendió. Es el foco principal de intervención.<span class="recommendation">ACCIÓN (Fase 3 y 4): Implementar debates y talleres de escritura argumentativa.</span></li><li><strong>Debilidad en Relación:</strong> La habilidad para 'Relacionar e interpretar' también muestra una caída importante.<span class="recommendation">ACCIÓN (Fase 2): Realizar sesiones de modelado de pensamiento para preguntas complejas.</span></li></ul></div></div>
                 </div>
             </section>
 
-            <section>
+            <section id="desglose-mat">
                 <h2 class="section-title">Desglose Longitudinal: Matemáticas</h2>
                  <div class="desglose-layout">
-                    <div class="desglose-charts-container">
-                        <div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="matChartEvo"></div></div>
-                        <div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="matChartFinal"></div></div>
-                    </div>
-                    <div class="desglose-analysis-container">
-                         <div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Base en Interpretación:</strong> 'Interpretación y representación' es la competencia más alta en el estado final (54.3 pts).</li></ul></div>
-                         <div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Dificultad en la Acción:</strong> 'Formulación y ejecución' es la competencia más baja (43.0 pts). Los estudiantes entienden el problema, pero no saben cómo plantear la solución.<span class="recommendation">ACCIÓN (Fase 3): Implementar "bancos de problemas" clasificados por tipo.</span></li><li><strong>Interpretación en descenso:</strong> A pesar de ser la más fuerte, tuvo el mayor retroceso (-16.7 pts), una señal de alerta grave.<span class="recommendation">ACCIÓN (Fase 1 y 2): Fortalecer la conexión entre conceptos y su representación gráfica.</span></li></ul></div>
-                    </div>
+                    <div class="desglose-charts-container"><div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="matChartEvo"></div></div><div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="matChartFinal"></div></div></div>
+                    <div class="desglose-analysis-container"><div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Base en Interpretación:</strong> 'Interpretación y representación' es la competencia más alta en el estado final (54.3 pts).</li></ul></div><div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Dificultad en la Acción:</strong> 'Formulación y ejecución' es la competencia más baja (43.0 pts). Los estudiantes entienden el problema, pero no saben cómo plantear la solución.<span class="recommendation">ACCIÓN (Fase 3): Implementar "bancos de problemas" clasificados por tipo.</span></li><li><strong>Interpretación en descenso:</strong> A pesar de ser la más fuerte, tuvo el mayor retroceso (-16.7 pts), una señal de alerta grave.<span class="recommendation">ACCIÓN (Fase 1 y 2): Fortalecer la conexión entre conceptos y su representación gráfica.</span></li></ul></div></div>
                 </div>
             </section>
             
-            <section>
+            <section id="desglose-soc">
                 <h2 class="section-title">Desglose Longitudinal: Sociales y Ciudadanas</h2>
                  <div class="desglose-layout">
-                    <div class="desglose-charts-container">
-                        <div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="socChartEvo"></div></div>
-                        <div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="socChartFinal"></div></div>
-                    </div>
-                    <div class="desglose-analysis-container">
-                         <div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Crecimiento Sostenido:</strong> Todas las competencias muestran evolución positiva, destacando el área como la de mayor progreso (+6.6 pts).</li><li><strong>Pensamiento Sistémico:</strong> 'Pensamiento reflexivo y sistémico' (52.7 pts) es el punto más fuerte del grupo.</li></ul></div>
-                         <div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Debilidad en Pensamiento Social:</strong> A pesar de su crecimiento, 'Pensamiento social' (47.7 pts) sigue siendo la competencia con menor puntaje.<span class="recommendation">ACCIÓN (Fase 1): Usar mapas conceptuales y líneas de tiempo para reforzar conceptos clave (Estado, democracia, etc.).</span></li></ul></div>
-                    </div>
+                    <div class="desglose-charts-container"><div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="socChartEvo"></div></div><div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="socChartFinal"></div></div></div>
+                    <div class="desglose-analysis-container"><div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Crecimiento Sostenido:</strong> Todas las competencias muestran evolución positiva, destacando el área como la de mayor progreso (+6.6 pts).</li><li><strong>Pensamiento Sistémico:</strong> 'Pensamiento reflexivo y sistémico' (52.7 pts) es el punto más fuerte del grupo.</li></ul></div><div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Debilidad en Pensamiento Social:</strong> A pesar de su crecimiento, 'Pensamiento social' (47.7 pts) sigue siendo la competencia con menor puntaje.<span class="recommendation">ACCIÓN (Fase 1): Usar mapas conceptuales y líneas de tiempo para reforzar conceptos clave (Estado, democracia, etc.).</span></li></ul></div></div>
                 </div>
             </section>
             
-            <section>
+            <section id="desglose-cn">
                 <h2 class="section-title">Desglose Longitudinal: Ciencias Naturales</h2>
                 <div class="desglose-layout">
-                    <div class="desglose-charts-container">
-                        <div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="cnChartEvo"></div></div>
-                        <div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="cnChartFinal"></div></div>
-                    </div>
-                    <div class="desglose-analysis-container">
-                         <div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Gran Avance en Explicación:</strong> 'Explicación de fenómenos' es la de mayor puntaje final (54.8) y muestra el crecimiento más espectacular (+17.3 pts).</li><li><strong>Progreso General:</strong> Junto a Sociales, es el área de mayor evolución positiva.</li></ul></div>
-                         <div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Indagación como Punto Débil:</strong> 'Indagación' presenta el puntaje más bajo (47.0 pts) y el menor crecimiento. Hay dificultades para diseñar experimentos y analizar variables.<span class="recommendation">ACCIÓN (Fase 3): Desarrollar prácticas de laboratorio (reales o simuladas) centradas en el diseño metodológico.</span></li></ul></div>
-                    </div>
+                    <div class="desglose-charts-container"><div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="cnChartEvo"></div></div><div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="cnChartFinal"></div></div></div>
+                    <div class="desglose-analysis-container"><div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Gran Avance en Explicación:</strong> 'Explicación de fenómenos' es la de mayor puntaje final (54.8) y muestra el crecimiento más espectacular (+17.3 pts).</li><li><strong>Progreso General:</strong> Junto a Sociales, es el área de mayor evolución positiva.</li></ul></div><div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Indagación como Punto Débil:</strong> 'Indagación' presenta el puntaje más bajo (47.0 pts) y el menor crecimiento. Hay dificultades para diseñar experimentos y analizar variables.<span class="recommendation">ACCIÓN (Fase 3): Desarrollar prácticas de laboratorio (reales o simuladas) centradas en el diseño metodológico.</span></li></ul></div></div>
                 </div>
             </section>
 
-            <section>
+            <section id="desglose-ing">
                 <h2 class="section-title">Desglose Longitudinal: Inglés</h2>
                  <div class="desglose-layout">
-                    <div class="desglose-charts-container">
-                        <div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="ingChartEvo"></div></div>
-                        <div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="ingChartFinal"></div></div>
-                    </div>
-                    <div class="desglose-analysis-container">
-                         <div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Avance Sociolingüístico:</strong> 'Sociolingüística' (uso del lenguaje en contexto) muestra un crecimiento notable (+8.9 pts), siendo el punto más fuerte del grupo.</li></ul></div>
-                         <div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Retroceso Pragmático:</strong> La competencia 'Pragmática' muestra un retroceso alarmante de -19.5 puntos. Existe una debilidad fundamental en comprender la intención comunicativa.<span class="recommendation">ACCIÓN: Realizar repasos de gramática y talleres de comprensión de lectura enfocados en la intención del autor.</span></li></ul></div>
-                    </div>
+                    <div class="desglose-charts-container"><div class="panel"><h4>Evolución por Competencia</h4><div class="chart-container" id="ingChartEvo"></div></div><div class="panel"><h4>Estado Final de Competencias (PI 11)</h4><div class="chart-container" id="ingChartFinal"></div></div></div>
+                    <div class="desglose-analysis-container"><div class="analysis-box"><h4>Fortalezas</h4><ul><li><strong>Avance Sociolingüístico:</strong> 'Sociolingüística' (uso del lenguaje en contexto) muestra un crecimiento notable (+8.9 pts), siendo el punto más fuerte del grupo.</li></ul></div><div class="analysis-box"><h4>Oportunidades de Mejora</h4><ul><li><strong>Retroceso Pragmático:</strong> La competencia 'Pragmática' muestra un retroceso alarmante de -19.5 puntos. Existe una debilidad fundamental en comprender la intención comunicativa.<span class="recommendation">ACCIÓN: Realizar repasos de gramática y talleres de comprensión de lectura enfocados en la intención del autor.</span></li></ul></div></div>
                 </div>
             </section>
 
@@ -290,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Gráfico Historial
     new ApexCharts(document.querySelector("#historialChart"), {
       series: [{ name: 'Institución', data: [250, 274, 273, 298] }, { name: 'Colombia', data: [250, 254, 257, 260] }],
-      chart: { type: 'bar', height: '100%', fontFamily, toolbar: { show: false } },
+      chart: { type: 'bar', height: 350, fontFamily, toolbar: { show: false } },
       plotOptions: { bar: { columnWidth: '60%' } },
       dataLabels: { enabled: true, offsetY: -20, style: { fontSize: '14px', colors: ["#304758"] } },
       xaxis: { categories: ['2021', '2022', '2023', '2024'], labels:{ style: { fontSize: '14px' } } },
@@ -301,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Gráfico Evolución
     new ApexCharts(document.querySelector("#evolucionChart"), {
         series: [{ name: 'Puntaje Global Grupo', data: [261.5, 250.9] }],
-        chart: { type: 'line', height: '100%', fontFamily, toolbar: { show: false } },
+        chart: { type: 'line', height: 350, fontFamily, toolbar: { show: false } },
         stroke: { curve: 'smooth', width: 4 }, markers: { size: 6 },
         dataLabels: { enabled: true, background: { enabled: true, borderRadius: 2 } },
         xaxis: { categories: ['Prueba Inicial (Sigma)', 'Prueba Final (PI)'], labels:{ style: { fontSize: '14px' } } },
@@ -327,7 +311,7 @@ document.addEventListener('DOMContentLoaded', function () {
             plotOptions: { bar: { horizontal: true, distributed: true } },
             dataLabels: { enabled: true, formatter: (val) => parseFloat(val).toFixed(1), style: { colors: ['#fff'], fontSize: '14px', fontWeight: '600' } },
             xaxis: { categories: finalData.map(d => d.x), min: 0, max: 100 },
-            yaxis: { labels: { style: { fontSize: '14px', fontWeight: '500' }}},
+            yaxis: { labels: { style: { fontSize: '14px', fontWeight: '500' }, wrap: true }},
             legend: { show: false },
             colors: [successColor, accentColor, warningColor, dangerColor],
             tooltip: { y: { formatter: (val) => val } }
