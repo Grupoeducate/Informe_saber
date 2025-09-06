@@ -1,26 +1,30 @@
-[
-  {
-    "dane": "194001000496",
-    "nombre": "COLEGIO BTO LUIS CARLOS GALAN SARMIENTO"
-  },
-  {
-    "dane": "194001001085",
-    "nombre": "COLEGIO DE EDUC BAS LOS LIBERTADORES"
-  },
-  {
-    "dane": "294001000091",
-    "nombre": "COLEGIO FRANCISCO MIRANDA"
-  },
-  {
-    "dane": "194001000771",
-    "nombre": "INSTITUCION INTEGD CUSTODIO GARCIA ROVIRA"
-  },
-  {
-    "dane": "194001001026",
-    "nombre": "COLEGIO DE EDUCACION BASICA LA PRIMAVERA"
-  },
-  {
-    "dane": "294001000105",
-    "nombre": "CENTRO EDUCATIVO JOSE EUSTACIO RIVERA"
-  }
-]
+{
+  "adminUser": "80417611",
+  "adminKey": "Jw1020++",
+  "colegios": [
+    {
+      "dane": "194001000496",
+      "nombre": "I.E. LUIS CARLOS GALAN SARMIENTO"
+    },
+    {
+      "dane": "194001001085",
+      "nombre": "COLEGIO DE EDUC BAS LOS LIBERTADORES"
+    },
+    {
+      "dane": "294001000091",
+      "nombre": "COLEGIO FRANCISCO MIRANDA"
+    },
+    {
+      "dane": "194001000771",
+      "nombre": "INSTITUCION INTEGD CUSTODIO GARCIA ROVIRA"
+    },
+    {
+      "dane": "194001001026",
+      "nombre": "COLEGIO DE EDUCACION BASICA LA PRIMAVERA"
+    },
+    {
+      "dane": "294001000105",
+      "nombre": "CENTRO EDUCATIVO JOSE EUSTACIO RIVERA"
+    }
+  ]
+}
