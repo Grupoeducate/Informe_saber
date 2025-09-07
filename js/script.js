@@ -1,22 +1,23 @@
-// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V10.0 (FINAL Y VERIFICADO) ---
+// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V11.0 (FINAL Y VERIFICADO) ---
 
 // --- ROUTER PRINCIPAL ---
 document.addEventListener('DOMContentLoaded', () => {
+    // Simplificamos la detección de la página para mayor robustez
     const path = window.location.pathname.split("/").pop();
     if (path === 'dashboard.html') {
         initDashboardPage();
     } else if (path === 'reporte.html') {
         initReportPage();
     } else {
+        // Asumimos que cualquier otra cosa (index.html, '', etc.) es la página de login
         initLoginPage();
     }
 });
 
-// --- FUNCIÓN fetchData (VERSIÓN FINAL Y CORRECTA PARA GITHUB PAGES) ---
+// --- LÓGICA DE CARGA DE DATOS (DEFINITIVA) ---
 async function fetchData(url) {
-    // La solución definitiva: Usamos la ruta completa y absoluta de su proyecto.
-    // Esto elimina toda ambigüedad.
-    const baseUrl = "https://grupoeducate.github.io/Informe_saber/"; 
+    // La ruta base del repositorio en GitHub Pages es el nombre del repositorio.
+    const baseUrl = "/Informe_saber/"; 
     const finalUrl = `${baseUrl}${url}`;
     
     const response = await fetch(finalUrl);
@@ -39,6 +40,7 @@ async function fetchData(url) {
         });
     }
 }
+
 // --- VISTA: LOGIN PAGE ---
 function initLoginPage() {
     const app = document.getElementById('app-container');
@@ -115,9 +117,13 @@ async function initReportPage() {
     try {
         app.innerHTML = `<div class="loading-screen"><h1>Cargando y procesando datos del informe...</h1></div>`;
 
+        // CORRECCIÓN FINAL: Se eliminan los '../' de las rutas
         const [colegiosData, nivelesData, nacionalesData, sigmaData, piData] = await Promise.all([
-            fetchData('colegios.json'), fetchData('data/niveles_icfes.json'), fetchData('data/promedios_nacionales.json'),
-            fetchData(`data/Sigma_${dane}.csv`), fetchData(`data/Pi_${dane}.csv`)
+            fetchData('colegios.json'), 
+            fetchData('data/niveles_icfes.json'), 
+            fetchData('data/promedios_nacionales.json'),
+            fetchData(`data/Sigma_${dane}.csv`), 
+            fetchData(`data/Pi_${dane}.csv`)
         ]);
 
         const colegioInfo = colegiosData.colegios.find(c => c.dane === dane);
