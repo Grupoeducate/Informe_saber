@@ -13,12 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// VERSIÓN NUEVA (CORRECTA Y DEFINITIVA)
 async function fetchData(url) {
-    // La ruta base del repositorio en GitHub Pages es el nombre del repositorio.
-    const baseUrl = "/Informe_saber"; 
-    const finalUrl = `${baseUrl}/${url}`;
-    
+    // La corrección definitiva:
+    // Construimos una URL completa y luego la normalizamos.
+    const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+    const finalUrl = new URL(url, window.location.origin + path).href;
+
     const response = await fetch(finalUrl);
     if (!response.ok) throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
     
@@ -26,13 +26,7 @@ async function fetchData(url) {
     if (url.endsWith('.csv')) {
         const text = await response.text();
         return new Promise((resolve, reject) => {
-            Papa.parse(text, { 
-                header: true, 
-                skipEmptyLines: true, 
-                dynamicTyping: true, 
-                complete: (results) => resolve(results.data), 
-                error: (err) => reject(err) 
-            });
+            Papa.parse(text, { header: true, skipEmptyLines: true, dynamicTyping: true, complete: (results) => resolve(results.data), error: (err) => reject(err) });
         });
     }
 }
