@@ -13,20 +13,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+// --- FUNCIÓN fetchData (VERSIÓN FINAL Y CORRECTA) ---
 async function fetchData(url) {
-    // La corrección definitiva:
-    // Construimos una URL completa y luego la normalizamos.
-    const path = window.location.pathname.endsWith('/') ? window.location.pathname : window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-    const finalUrl = new URL(url, window.location.origin + path).href;
-
+    // La solución definitiva: Usamos la ruta completa y absoluta de su proyecto.
+    const baseUrl = "https://grupoeducate.github.io/Informe_saber/"; 
+    const finalUrl = `${baseUrl}${url}`;
+    
     const response = await fetch(finalUrl);
-    if (!response.ok) throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+        console.error(`FALLO AL CARGAR: ${finalUrl} (Estado: ${response.status})`);
+        throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
+    }
     
     if (url.endsWith('.json')) return response.json();
     if (url.endsWith('.csv')) {
         const text = await response.text();
         return new Promise((resolve, reject) => {
-            Papa.parse(text, { header: true, skipEmptyLines: true, dynamicTyping: true, complete: (results) => resolve(results.data), error: (err) => reject(err) });
+            Papa.parse(text, { 
+                header: true, 
+                skipEmptyLines: true, 
+                dynamicTyping: true, 
+                complete: (results) => resolve(results.data), 
+                error: (err) => reject(err) 
+            });
         });
     }
 }
