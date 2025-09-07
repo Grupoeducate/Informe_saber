@@ -1,21 +1,23 @@
-// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V9.0 (FINAL Y CORREGIDO) ---
+// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V10.0 (FINAL Y VERIFICADO) ---
 
 // --- ROUTER PRINCIPAL ---
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname.split("/").pop();
-    if (path === 'index.html' || path === '' || path === 'Informe_saber') {
-        initLoginPage();
-    } else if (path === 'dashboard.html') {
+    if (path === 'dashboard.html') {
         initDashboardPage();
     } else if (path === 'reporte.html') {
         initReportPage();
+    } else {
+        initLoginPage();
     }
 });
 
 // --- LÓGICA DE CARGA DE DATOS (DEFINITIVA) ---
 async function fetchData(url) {
-    const baseUrl = "/Informe_saber/"; 
-    const finalUrl = `${baseUrl}${url}`;
+    const isSubPage = window.location.pathname.includes('dashboard.html') || window.location.pathname.includes('reporte.html');
+    const prefix = isSubPage ? '../' : '';
+    const finalUrl = `${prefix}${url}`;
+    
     const response = await fetch(finalUrl);
     if (!response.ok) {
         throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
@@ -75,7 +77,24 @@ async function handleLogin(e) {
 
 // --- VISTA: DASHBOARD PAGE ---
 async function initDashboardPage() {
-    // ... (código sin cambios)
+    const app = document.getElementById('app-container');
+    app.innerHTML = `
+        <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>Dashboard de Administración</h2></header>
+        <main class="dashboard-container">
+            <h1 class="section-title">Colegios Registrados</h1>
+            <div class="table-container"><table id="colegios-table"><thead><tr><th>Nombre</th><th>DANE</th><th>Acción</th></tr></thead><tbody></tbody></table></div>
+        </main>`;
+    try {
+        const data = await fetchData('colegios.json');
+        const tableBody = document.querySelector('#colegios-table tbody');
+        data.colegios.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        tableBody.innerHTML = data.colegios.map(colegio => `
+            <tr>
+                <td>${colegio.nombre}</td>
+                <td>${colegio.dane}</td>
+                <td><a href="reporte.html?dane=${colegio.dane}" class="action-btn" target="_blank">Ver Informe</a></td>
+            </tr>`).join('');
+    } catch (error) { console.error("Error en dashboard:", error); }
 }
 
 // --- VISTA: REPORTE PAGE (MOTOR COMPLETO) ---
@@ -88,13 +107,9 @@ async function initReportPage() {
     try {
         app.innerHTML = `<div class="loading-screen"><h1>Cargando y procesando datos del informe...</h1></div>`;
 
-        // CORRECCIÓN FINAL: Se eliminan los '../' de las rutas
         const [colegiosData, nivelesData, nacionalesData, sigmaData, piData] = await Promise.all([
-            fetchData('colegios.json'), 
-            fetchData('data/niveles_icfes.json'), 
-            fetchData('data/promedios_nacionales.json'),
-            fetchData(`data/Sigma_${dane}.csv`), 
-            fetchData(`data/Pi_${dane}.csv`)
+            fetchData('colegios.json'), fetchData('data/niveles_icfes.json'), fetchData('data/promedios_nacionales.json'),
+            fetchData(`data/Sigma_${dane}.csv`), fetchData(`data/Pi_${dane}.csv`)
         ]);
 
         const colegioInfo = colegiosData.colegios.find(c => c.dane === dane);
@@ -132,5 +147,3 @@ async function initReportPage() {
         app.innerHTML = `<h1>Error al generar el informe</h1><p>${error.message}</p>`;
     }
 }
-
-// El resto de las funciones (initDashboardPage, etc.) se mantienen igual
