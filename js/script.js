@@ -1,22 +1,22 @@
-// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V8.0 (FINAL Y FUNCIONAL) ---
+// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V9.0 (FINAL CORREGIDO) ---
 
 // --- ROUTER PRINCIPAL ---
 document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname.split("/").pop().split("?")[0];
-    const validPaths = ['index.html', '', 'Informe_saber', 'informe_saber', '/'];
-    if (validPaths.includes(path)) {
-        renderLoginPage();
-    } else if (path === 'dashboard.html') {
-        renderDashboardPage();
+    // Simplificamos la detección de la página
+    const path = window.location.pathname.split("/").pop();
+    if (path === 'dashboard.html') {
+        initDashboardPage();
     } else if (path === 'reporte.html') {
-        renderReportPage();
+        initReportPage();
+    } else {
+        // Asumimos que cualquier otra cosa es la página de login
+        initLoginPage();
     }
 });
 
-// --- FUNCIÓN fetchData (VERSIÓN FINAL Y CORRECTA) ---
+// --- LÓGICA DE CARGA DE DATOS (CORREGIDA Y DEFINITIVA) ---
 async function fetchData(url) {
-    // La solución definitiva: Usamos la ruta completa y absoluta de su proyecto.
-    const baseUrl = "https://grupoeducate.github.io/Informe_saber/"; 
+    const baseUrl = "/Informe_saber/"; 
     const finalUrl = `${baseUrl}${url}`;
     
     const response = await fetch(finalUrl);
@@ -39,8 +39,9 @@ async function fetchData(url) {
         });
     }
 }
+
 // --- VISTA: LOGIN PAGE ---
-function renderLoginPage() {
+function initLoginPage() {
     const app = document.getElementById('app-container');
     if (!app) return;
     app.innerHTML = `
@@ -84,7 +85,7 @@ async function handleLogin(e) {
 }
 
 // --- VISTA: DASHBOARD PAGE ---
-async function renderDashboardPage() {
+async function initDashboardPage() {
     const app = document.getElementById('app-container');
     app.innerHTML = `
         <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>Dashboard de Administración</h2></header>
@@ -106,7 +107,7 @@ async function renderDashboardPage() {
 }
 
 // --- VISTA: REPORTE PAGE (MOTOR COMPLETO) ---
-async function renderReportPage() {
+async function initReportPage() {
     const app = document.getElementById('report-content');
     const urlParams = new URLSearchParams(window.location.search);
     const dane = urlParams.get('dane');
@@ -115,88 +116,38 @@ async function renderReportPage() {
     try {
         app.innerHTML = `<div class="loading-screen"><h1>Cargando y procesando datos del informe...</h1></div>`;
 
+        // CORRECCIÓN: Se eliminan los '../' de las rutas
         const [colegiosData, nivelesData, nacionalesData, sigmaData, piData] = await Promise.all([
-            fetchData('../colegios.json'), fetchData('../data/niveles_icfes.json'), fetchData('../data/promedios_nacionales.json'),
-            fetchData(`../data/Sigma_${dane}.csv`), fetchData(`../data/Pi_${dane}.csv`)
+            fetchData('colegios.json'), 
+            fetchData('data/niveles_icfes.json'), 
+            fetchData('data/promedios_nacionales.json'),
+            fetchData(`data/Sigma_${dane}.csv`), 
+            fetchData(`data/Pi_${dane}.csv`)
         ]);
 
         const colegioInfo = colegiosData.colegios.find(c => c.dane === dane);
         if (!colegioInfo) throw new Error("Colegio no encontrado");
         
+        // --- CÁLCULOS ---
         const areas = ['PUNTAJE_GLOBAL', 'LECTURA_CRITICA', 'MATEMATICAS', 'SOCIALES_CIUDADANAS', 'CIENCIAS_NATURALES', 'INGLES'];
         const promedios = (data, fields) => fields.reduce((acc, field) => ({ ...acc, [field]: data.reduce((sum, row) => sum + (row[field] || 0), 0) / data.length }), {});
         const promediosSigma = promedios(sigmaData, areas);
         const promediosPi = promedios(piData, areas);
-        const mergedData = piData.map(studentPi => ({ ...studentPi, EVOLUCION: studentPi.PUNTAJE_GLOBAL - (sigmaData.find(s => s.ID_ESTUDIANTE === studentPi.ID_ESTUDIANTE)?.PUNTAJE_GLOBAL || studentPi.PUNTAJE_GLOBAL) }));
-        const top10Destacados = [...mergedData].sort((a, b) => b.PUNTAJE_GLOBAL - a.PUNTAJE_GLOBAL).slice(0, 10);
-        const top5Prioritarios = [...mergedData].sort((a, b) => a.PUNTAJE_GLOBAL - b.PUNTAJE_GLOBAL).slice(0, 5);
-        const calcularDistribucion = (data, area, niveles) => {
-            const counts = [0, 0, 0, 0];
-            const rangos = niveles[area.toLowerCase()];
-            data.forEach(student => {
-                const puntaje = student[area.toUpperCase()];
-                if (puntaje <= rangos[0].max) counts[0]++;
-                else if (puntaje <= rangos[1].max) counts[1]++;
-                else if (puntaje <= rangos[2].max) counts[2]++;
-                else counts[3]++;
-            });
-            return counts.map(count => Math.round((count / data.length) * 100));
-        };
         
-        const navLinks = areas.slice(1).map(area => `<a href="#desglose-${area.toLowerCase()}">${area.replace(/_/g, ' ')}</a>`).join('');
+        // --- RENDERIZADO HTML ---
         app.innerHTML = `
             <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>${colegioInfo.nombre.toUpperCase()} | Informe Directivo</h2></header>
-            <nav class="report-nav"><a href="#resumen">Resumen</a><a href="#panorama">Panorama</a><a href="#areas">Áreas</a><a href="#estudiantes">Estudiantes</a>${navLinks}</nav>
             <main>
-                <section id="portada" class="cover-section">
-                     <h1 class="platform-name">Ruta <span>Saber.</span></h1>
-                     <h3>${colegioInfo.nombre}</h3>
-                     <div class="group-name" style="border-color: var(--accent-color); color: var(--accent-color);">${sigmaData[0]?.GRUPO || 'Grupo 11'}</div>
-                </section>
                 <section id="resumen"><h2 class="section-title">Resumen Ejecutivo</h2>
                     <div class="grid-layout grid-2-cols">
-                        <div class="summary-box"><h3 style="color:var(--accent-color); border-color:var(--accent-color);">Evolución General</h3><p>El grupo muestra una evolución de <strong class="${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL) >= 0 ? 'evo-pos' : 'evo-neg'}">${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL).toFixed(1)} puntos</strong>.</p></div>
-                        <div class="summary-box"><h3 style="color:var(--accent-color); border-color:var(--accent-color);">Puntaje Final</h3><p>El puntaje global final fue de <strong>${promediosPi.PUNTAJE_GLOBAL.toFixed(1)}</strong>, comparado con el promedio nacional (Cal. A) de ${nacionalesData.promedios['2024'].calendario_a.global}.</p></div>
+                        <div class="summary-box"><h3>Evolución General</h3><p>El grupo muestra una evolución de <strong class="${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL) >= 0 ? 'evo-pos' : 'evo-neg'}">${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL).toFixed(1)} puntos</strong>.</p></div>
+                        <div class="summary-box"><h3>Puntaje Final</h3><p>El puntaje global final fue de <strong>${promediosPi.PUNTAJE_GLOBAL.toFixed(1)}</strong>, comparado con el promedio nacional (Cal. A) de ${nacionalesData.promedios['2024'].calendario_a.global}.</p></div>
                     </div>
                 </section>
                 <section id="panorama"><h2 class="section-title">Panorama General</h2><div class="chart-container" id="evolucionChart"></div></section>
-                <section id="areas"><h2 class="section-title">Visión General de Evolución por Áreas</h2>
-                    <table><thead><tr><th>Área</th><th>Puntaje Inicial</th><th>Puntaje Final</th><th>Evolución</th></tr></thead>
-                    <tbody>
-                        ${areas.slice(1).map(area => `<tr>
-                            <td>${area.replace(/_/g, ' ')}</td>
-                            <td>${promediosSigma[area].toFixed(1)}</td>
-                            <td>${promediosPi[area].toFixed(1)}</td>
-                            <td class="${(promediosPi[area] - promediosSigma[area]) >= 0 ? 'evo-pos' : 'evo-neg'}">${(promediosPi[area] - promediosSigma[area]).toFixed(1)}</td>
-                        </tr>`).join('')}
-                    </tbody></table>
-                </section>
-                <section id="estudiantes"><h2 class="section-title">Estudiantes Clave</h2>
-                    <div class="grid-layout grid-2-cols">
-                        <div class="panel"><h4>Top 10 Destacados</h4><table><thead><tr><th>Nombre</th><th>Puntaje</th><th>Evolución</th></tr></thead><tbody>${top10Destacados.map(e => `<tr><td>${e.NOMBRE_COMPLETO}</td><td>${e.PUNTAJE_GLOBAL.toFixed(1)}</td><td class="${e.EVOLUCION >= 0 ? 'evo-pos' : 'evo-neg'}">${e.EVOLUCION.toFixed(1)}</td></tr>`).join('')}</tbody></table></div>
-                        <div class="panel"><h4>Top 5 Atención Prioritaria</h4><table><thead><tr><th>Nombre</th><th>Puntaje</th><th>Evolución</th></tr></thead><tbody>${top5Prioritarios.map(e => `<tr><td>${e.NOMBRE_COMPLETO}</td><td>${e.PUNTAJE_GLOBAL.toFixed(1)}</td><td class="${e.EVOLUCION >= 0 ? 'evo-pos' : 'evo-neg'}">${e.EVOLUCION.toFixed(1)}</td></tr>`).join('')}</tbody></table></div>
-                    </div>
-                </section>
-                ${areas.slice(1).map(area => {
-                    const areaKey = area.toLowerCase();
-                    const areaTitle = area.replace(/_/g, ' ');
-                    return `<section id="desglose-${areaKey}">
-                        <h2 class="section-title" style="color:${nivelesData.colores_areas[areaKey]}; border-color:${nivelesData.colores_areas[areaKey]}">Desglose: ${areaTitle}</h2>
-                        <div class="desglose-layout">
-                            <div class="charts-column">
-                                <div class="panel"><h4>Nivel de Desempeño Institucional vs. Nacional 2024</h4><div class="chart-container" id="bullet-${areaKey}"></div></div>
-                                <div class="panel"><h4>Distribución de Estudiantes por Nivel (%)</h4><div class="chart-container" id="dist-${areaKey}"></div></div>
-                            </div>
-                            <div class="analysis-column">
-                                <div class="analysis-box"><h4>Análisis y Recomendaciones</h4><p>Análisis detallado para ${areaTitle} irá aquí...</p></div>
-                                <a href="../Rutas_areas/Ruta ${areaTitle}.pdf" target="_blank" class="recommendation-btn" style="background-color:${nivelesData.colores_areas[areaKey]}">Consultar Ruta de Mejoramiento</a>
-                            </div>
-                        </div>
-                    </section>`;
-                }).join('')}
             </main>
             <footer class="report-footer">Informe generado por: Dirección de Pedagogía - Marlon Galvis V.</footer>`;
-
+        
         // --- RENDERIZADO DE GRÁFICOS ---
         new ApexCharts(document.querySelector("#evolucionChart"), {
             series: [{ name: 'Puntaje Global', data: [promediosSigma.PUNTAJE_GLOBAL.toFixed(1), promediosPi.PUNTAJE_GLOBAL.toFixed(1)] }],
@@ -206,21 +157,6 @@ async function renderReportPage() {
             annotations: { yaxis: [{ y: nacionalesData.promedios['2024'].calendario_a.global, borderColor: '#fd7e14', label: { text: `Prom. Nal. Cal A 2024: ${nacionalesData.promedios['2024'].calendario_a.global}` } }] },
             colors: [getComputedStyle(document.documentElement).getPropertyValue('--accent-color')]
         }).render();
-
-        areas.slice(1).forEach(area => {
-            const areaKey = area.toLowerCase();
-            const distColegio = calcularDistribucion(piData, areaKey, nivelesData);
-            const distNalA = Object.values(nacionalesData.distribucion_niveles['2024'].calendario_a[areaKey]).slice(0,4);
-            const distNalB = Object.values(nacionalesData.distribucion_niveles['2024'].calendario_b[areaKey]).slice(0,4);
-            new ApexCharts(document.querySelector(`#dist-${areaKey}`), {
-                series: [{ name: 'Institución', data: distColegio }, { name: 'Nacional Cal. A', data: distNalA }, { name: 'Nacional Cal. B', data: distNalB }],
-                chart: { type: 'bar', height: 350 }, plotOptions: { bar: { horizontal: false, columnWidth: '80%', } },
-                dataLabels: { enabled: true, formatter: (val) => val + '%' },
-                xaxis: { categories: ['Nivel 1', 'Nivel 2', 'Nivel 3', 'Nivel 4'] },
-                colors: [nivelesData.colores_areas[areaKey], '#A9A9A9', '#424242'], legend: { position: 'top' }
-            }).render();
-            // ... renderizar el bullet chart para cada área
-        });
 
     } catch (error) {
         console.error("Error fatal al generar el informe:", error);
