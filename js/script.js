@@ -13,23 +13,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- LÓGICA DE CARGA DE DATOS (ROBUSTA) ---
+// VERSIÓN NUEVA (CORRECTA Y DEFINITIVA)
 async function fetchData(url) {
-    const isSubPage = window.location.pathname.includes('dashboard.html') || window.location.pathname.includes('reporte.html');
-    const prefix = isSubPage ? '../' : '';
-    const finalUrl = `${prefix}${url}`;
+    // La ruta base del repositorio en GitHub Pages es el nombre del repositorio.
+    const baseUrl = "/Informe_saber"; 
+    const finalUrl = `${baseUrl}/${url}`;
     
     const response = await fetch(finalUrl);
-    if (!response.ok) throw new Error(`Error al cargar ${finalUrl}: ${response.statusText}`);
+    if (!response.ok) throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
+    
     if (url.endsWith('.json')) return response.json();
     if (url.endsWith('.csv')) {
         const text = await response.text();
         return new Promise((resolve, reject) => {
-            Papa.parse(text, { header: true, skipEmptyLines: true, dynamicTyping: true, complete: (results) => resolve(results.data), error: (err) => reject(err) });
+            Papa.parse(text, { 
+                header: true, 
+                skipEmptyLines: true, 
+                dynamicTyping: true, 
+                complete: (results) => resolve(results.data), 
+                error: (err) => reject(err) 
+            });
         });
     }
 }
-
 // --- VISTA: LOGIN PAGE ---
 function renderLoginPage() {
     const app = document.getElementById('app-container');
