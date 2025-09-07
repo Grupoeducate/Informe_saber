@@ -4,36 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruta Saber | Grupo Edúcate Colombia</title>
-    <!-- La ruta al CSS debe ser relativa a la ubicación del index.html -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <nav class="navbar">
-        <div class="logo">
-            <!-- La ruta a la imagen debe ser relativa -->
-            <img src="imagenes/Logogec.png" alt="Grupo Edúcate Colombia">
-        </div>
-        <a href="#login-form" class="access-btn">Acceder</a>
-    </nav>
-    <main class="hero-section">
-        <div class="hero-content">
-            <h1 class="platform-name">Ruta <span>Saber.</span></h1>
-            <p class="subtitle">
-                Accede a tus datos, enfócate en la meta. Identifica fortalezas y diseña planes de mejoramiento accionables para llevar a tu institución al siguiente nivel.
-            </p>
-            <form id="login-form" class="login-form">
-                <input type="text" id="user" placeholder="Código DANE o Usuario Admin" required>
-                <input type="password" id="pass" placeholder="Clave" required>
-                <button type="submit">Ingresar a mi Ruta</button>
-                <div id="error-message"></div>
-            </form>
-        </div>
-        <div class="hero-visual">
-            <!-- La ruta a la imagen debe ser relativa -->
-            <img src="imagenes/fondo.png" alt="Análisis de datos educativos">
-        </div>
-    </main>
-    <!-- La ruta al JS debe ser relativa -->
+    <div id="app-container">
+        <!-- El contenido se generará aquí por JavaScript -->
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
     <script src="js/script.js"></script>
 </body>
 </html>
