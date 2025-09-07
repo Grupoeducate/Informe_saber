@@ -12,24 +12,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- LÓGICA DE CARGA DE DATOS (DEFINITIVA) ---
+// --- FUNCIÓN fetchData (VERSIÓN UNIVERSAL Y A PRUEBA DE FUTURO) ---
 async function fetchData(url) {
-    const baseUrl = "/Informe_saber/"; 
-    const finalUrl = `${baseUrl}${url}`;
+    // 1. Determinar la ruta base dinámicamente.
+    let baseUrl = window.location.pathname;
+    if (baseUrl.endsWith('.html')) {
+        baseUrl = baseUrl.substring(0, baseUrl.lastIndexOf('/') + 1);
+    } else if (!baseUrl.endsWith('/')) {
+        baseUrl += '/';
+    }
+
+    // 2. Construir la URL final.
+    const finalUrl = new URL(url, window.location.origin + baseUrl).href;
+
     const response = await fetch(finalUrl);
     if (!response.ok) {
+        console.error(`FALLO AL CARGAR: ${finalUrl} (Estado: ${response.status})`);
         throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
     }
+
     if (url.endsWith('.json')) return response.json();
     if (url.endsWith('.csv')) {
         const text = await response.text();
         return new Promise((resolve, reject) => {
-            Papa.parse(text, { 
-                header: true, 
-                skipEmptyLines: true, 
-                dynamicTyping: true, 
-                complete: (results) => resolve(results.data), 
-                error: (err) => reject(err) 
+            Papa.parse(text, {
+                header: true,
+                skipEmptyLines: true,
+                dynamicTyping: true,
+                complete: (results) => resolve(results.data),
+                error: (err) => reject(err)
             });
         });
     }
