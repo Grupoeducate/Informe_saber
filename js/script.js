@@ -1,56 +1,115 @@
-// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V4.0 (COMPLETO) ---
+// --- PROMPT MAESTRO V3.0 - SCRIPT DE DEPURACIÓN V1.0 ---
+
+console.log("--- INICIO DE EJECUCIÓN DE SCRIPT.JS ---");
 
 // --- ROUTER PRINCIPAL ---
 document.addEventListener('DOMContentLoaded', () => {
+    console.log("PUNTO DE CONTROL 1: El DOM se ha cargado.");
     const path = window.location.pathname.split("/").pop().split("?")[0];
-    const validPaths = ['index.html', '', 'Informe_saber', 'informe_saber'];
-    if (validPaths.includes(path)) {
-        renderLoginPage();
+    console.log(`PUNTO DE CONTROL 2: Detectada la página actual: "${path}"`);
+
+    if (path === 'index.html' || path === '' || path === 'Informe_saber' || path === 'informe_saber') {
+        console.log("ACCIÓN: Ejecutando lógica de la página de LOGIN.");
+        setupLoginListener();
     } else if (path === 'dashboard.html') {
-        renderDashboardPage();
+        console.log("ACCIÓN: Ejecutando lógica del DASHBOARD.");
+        // renderDashboardPage(); // Desactivado por ahora
     } else if (path === 'reporte.html') {
+        console.log("ACCIÓN: Ejecutando lógica de la página de REPORTE.");
         renderReportPage();
     }
 });
 
-// --- LÓGICA DE CARGA DE DATOS ---
+// --- LÓGICA DE CARGA DE DATOS (CON DEPURACIÓN) ---
 async function fetchData(url) {
-    const baseUrl = window.location.pathname.includes('/Informe_saber/') ? '/Informe_saber/' : '/';
-    const finalUrl = url.startsWith('data/') || url.startsWith('Rutas_areas/') ? `${baseUrl}${url}` : url;
-    const response = await fetch(finalUrl);
-    if (!response.ok) throw new Error(`Error al cargar ${finalUrl}: ${response.statusText}`);
-    if (url.endsWith('.json')) return response.json();
-    if (url.endsWith('.csv')) {
-        const text = await response.text();
-        return new Promise(resolve => {
-            Papa.parse(text, { header: true, skipEmptyLines: true, dynamicTyping: true, complete: (results) => resolve(results.data) });
-        });
+    const isRoot = window.location.pathname === '/Informe_saber/' || window.location.pathname === '/Informe_saber/index.html';
+    const prefix = isRoot ? '' : '../'; 
+    const finalUrl = `${prefix}${url}`;
+    
+    console.log(`Intentando cargar archivo: ${finalUrl}`);
+    
+    try {
+        const response = await fetch(finalUrl);
+        if (!response.ok) {
+            console.error(`ERROR al cargar ${finalUrl}: El servidor respondió con estado ${response.status}`);
+            throw new Error(`Error de red para ${finalUrl}`);
+        }
+        console.log(`ÉXITO al cargar ${finalUrl}`);
+        
+        if (url.endsWith('.json')) return response.json();
+        if (url.endsWith('.csv')) {
+            const text = await response.text();
+            return new Promise(resolve => {
+                Papa.parse(text, { header: true, skipEmptyLines: true, dynamicTyping: true, complete: (results) => resolve(results.data) });
+            });
+        }
+    } catch (error) {
+        console.error(`FALLO CATASTRÓFICO al intentar cargar ${finalUrl}:`, error);
+        throw error; // Propagar el error
     }
 }
 
-// --- VISTA: LOGIN PAGE ---
-function renderLoginPage() {
-    // ... (código sin cambios)
+// --- LÓGICA DE LOGIN (CON DEPURACIÓN) ---
+function setupLoginListener() {
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        console.log("PUNTO DE CONTROL 3: Formulario de login encontrado. Añadiendo listener.");
+        loginForm.addEventListener('submit', handleLogin);
+    } else {
+        console.error("ERROR CRÍTICO: No se encontró el formulario de login en index.html");
+    }
 }
+
 async function handleLogin(e) {
-    // ... (código sin cambios)
+    e.preventDefault();
+    console.log("PUNTO DE CONTROL 4: Se ha hecho clic en el botón de login.");
+    // ... (lógica de login sin cambios)
+    const user = document.getElementById('user').value.trim();
+    const pass = document.getElementById('pass').value.trim();
+    const errorMessage = document.getElementById('error-message');
+    try {
+        const data = await fetchData('colegios.json');
+        if (user === data.adminUser && pass === data.adminKey) {
+            sessionStorage.setItem('RutaSaberUser', 'admin');
+            window.location.href = 'dashboard.html';
+            return;
+        }
+        const colegio = data.colegios.find(c => c.dane === user);
+        if (colegio) {
+            const generatedPass = `${user[0]}${user.slice(-1)}${user[1]}${user.slice(-2, -1)}`;
+            if (pass === generatedPass) {
+                sessionStorage.setItem('RutaSaberUser', colegio.dane);
+                window.location.href = `reporte.html?dane=${colegio.dane}`;
+                return;
+            }
+        }
+        errorMessage.textContent = "Usuario o clave incorrectos.";
+    } catch (error) {
+        errorMessage.textContent = "Error del sistema. Verifique la consola.";
+        console.error("Error en el login:", error);
+    }
 }
 
-// --- VISTA: DASHBOARD PAGE ---
-async function renderDashboardPage() {
-    // ... (código sin cambios)
-}
 
-// --- VISTA: REPORTE PAGE (MOTOR COMPLETO) ---
+// --- LÓGICA DE REPORTE (CON DEPURACIÓN) ---
 async function renderReportPage() {
+    const reportContainer = document.getElementById('report-content');
+    console.log("PUNTO DE CONTROL 5: Iniciando la generación del informe.");
+    
     const urlParams = new URLSearchParams(window.location.search);
     const dane = urlParams.get('dane');
-    const reportContainer = document.getElementById('report-content');
-    if (!dane) { reportContainer.innerHTML = "<h1>Error: DANE no especificado.</h1>"; return; }
+    console.log(`PUNTO DE CONTROL 6: DANE extraído de la URL: ${dane}`);
+
+    if (!dane) {
+        reportContainer.innerHTML = "<h1>Error: DANE no especificado en la URL.</h1>";
+        console.error("Fallo en el Punto de Control 6: No se encontró el DANE.");
+        return;
+    }
 
     try {
-        reportContainer.innerHTML = "<h1>Cargando y procesando datos del informe...</h1>";
-
+        reportContainer.innerHTML = "<h1>Cargando datos... Verifique la consola para ver el progreso.</h1>";
+        
+        console.log("PUNTO DE CONTROL 7: Iniciando carga de todos los archivos de datos en paralelo.");
         const [colegiosData, nivelesData, nacionalesData, sigmaData, piData] = await Promise.all([
             fetchData('colegios.json'),
             fetchData('data/niveles_icfes.json'),
@@ -58,57 +117,16 @@ async function renderReportPage() {
             fetchData(`data/Sigma_${dane}.csv`),
             fetchData(`data/Pi_${dane}.csv`)
         ]);
-
-        const colegioInfo = colegiosData.colegios.find(c => c.dane === dane);
-        if (!colegioInfo) throw new Error("Colegio no encontrado");
-
-        // --- CÁLCULOS ---
-        const promedios = (data, fields) => fields.reduce((acc, field) => ({ ...acc, [field]: data.reduce((sum, row) => sum + (row[field] || 0), 0) / data.length }), {});
-        const areas = ['PUNTAJE_GLOBAL', 'LECTURA_CRITICA', 'MATEMATICAS', 'SOCIALES_CIUDADANAS', 'CIENCIAS_NATURALES', 'INGLES'];
-        const promediosSigma = promedios(sigmaData, areas);
-        const promediosPi = promedios(piData, areas);
-
-        const mergedData = piData.map(studentPi => {
-            const studentSigma = sigmaData.find(s => s.ID_ESTUDIANTE === studentPi.ID_ESTUDIANTE);
-            const evolucion = studentSigma ? (studentPi.PUNTAJE_GLOBAL - studentSigma.PUNTAJE_GLOBAL) : null;
-            return { ...studentPi, PUNTAJE_INICIAL: studentSigma?.PUNTAJE_GLOBAL, EVOLUCION: evolucion };
-        });
-
-        const top10Destacados = [...mergedData].sort((a, b) => b.PUNTAJE_GLOBAL - a.PUNTAJE_GLOBAL).slice(0, 10);
-        const top5Prioritarios = [...mergedData].sort((a, b) => a.PUNTAJE_GLOBAL - b.PUNTAJE_GLOBAL).slice(0, 5);
+        console.log("PUNTO DE CONTROL 8: ¡Todos los archivos de datos se han cargado exitosamente!");
         
-        // --- CONSTRUCCIÓN DEL HTML ---
         reportContainer.innerHTML = `
-            <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>${colegioInfo.nombre.toUpperCase()} | Informe Directivo</h2></header>
-            <nav class="report-nav"><!-- ... (menú) ... --></nav>
-            <main>
-                <section id="resumen"><h2 class="section-title">Resumen Ejecutivo</h2><!-- ... (contenido) ... --></section>
-                <section id="panorama"><h2 class="section-title">Panorama General</h2><div id="evolucionChart"></div></section>
-                <section id="areas"><h2 class="section-title">Evolución por Áreas</h2><!-- ... (tabla) ... --></section>
-                <section id="estudiantes"><h2 class="section-title">Estudiantes Clave</h2><!-- ... (tablas) ... --></section>
-                <!-- Secciones de Desglose -->
-            </main>
-            <footer class="report-footer">Informe generado por: Dirección de Pedagogía - Marlon Galvis V.</footer>`;
-        
-        // Llenar contenido dinámico (ejemplo para Resumen y tablas)
-        document.querySelector('#resumen').innerHTML += `<div class="grid-layout grid-2-cols">...</div>`;
-        // ... Llenar tablas de estudiantes, etc.
-
-        // --- RENDERIZADO DE GRÁFICOS ---
-        new ApexCharts(document.querySelector("#evolucionChart"), {
-            series: [{ name: 'Puntaje Global', data: [promediosSigma.PUNTAJE_GLOBAL.toFixed(1), promediosPi.PUNTAJE_GLOBAL.toFixed(1)] }],
-            chart: { type: 'line', height: 350, fontFamily: 'Barlow Condensed' },
-            stroke: { curve: 'smooth', width: 4 }, markers: { size: 6 },
-            dataLabels: { enabled: true },
-            xaxis: { categories: ['Prueba Inicial (Sigma)', 'Prueba Final (PI)'] },
-            yaxis: { title: { text: 'Puntaje Global' } },
-            annotations: { yaxis: [{ y: nacionalesData.promedios['2024'].calendario_a.global, borderColor: '#fd7e14', label: { text: `Prom. Nal. Cal A 2024: ${nacionalesData.promedios['2024'].calendario_a.global}` } }] },
-            colors: [getComputedStyle(document.documentElement).getPropertyValue('--accent-color')]
-        }).render();
-        // ... Renderizar todos los demás gráficos que hemos diseñado.
+            <h1>¡Éxito!</h1>
+            <p>Todos los datos para el DANE ${dane} se han cargado correctamente.</p>
+            <p>Ahora podemos proceder a construir el informe completo.</p>
+        `;
 
     } catch (error) {
-        console.error("Error fatal al generar el informe:", error);
-        reportContainer.innerHTML = `<h1>Error al generar el informe</h1><p>${error.message}</p>`;
+        console.error("ERROR FATAL durante la generación del informe:", error);
+        reportContainer.innerHTML = `<h1>Error al Cargar los Datos</h1><p>No se pudo generar el informe. Revise la consola para ver qué archivo falló.</p><p>Error: ${error.message}</p>`;
     }
 }
