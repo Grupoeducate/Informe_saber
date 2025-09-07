@@ -2,30 +2,24 @@
 
 // --- ROUTER PRINCIPAL ---
 document.addEventListener('DOMContentLoaded', () => {
-    // Simplificamos la detección de la página para mayor robustez
     const path = window.location.pathname.split("/").pop();
     if (path === 'dashboard.html') {
         initDashboardPage();
     } else if (path === 'reporte.html') {
         initReportPage();
     } else {
-        // Asumimos que cualquier otra cosa (index.html, '', etc.) es la página de login
         initLoginPage();
     }
 });
 
 // --- LÓGICA DE CARGA DE DATOS (DEFINITIVA) ---
 async function fetchData(url) {
-    // La ruta base del repositorio en GitHub Pages es el nombre del repositorio.
     const baseUrl = "/Informe_saber/"; 
     const finalUrl = `${baseUrl}${url}`;
-    
     const response = await fetch(finalUrl);
     if (!response.ok) {
-        console.error(`FALLO AL CARGAR: ${finalUrl} (Estado: ${response.status})`);
         throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
     }
-    
     if (url.endsWith('.json')) return response.json();
     if (url.endsWith('.csv')) {
         const text = await response.text();
@@ -88,6 +82,7 @@ async function handleLogin(e) {
 // --- VISTA: DASHBOARD PAGE ---
 async function initDashboardPage() {
     const app = document.getElementById('app-container');
+    if (!app) return;
     app.innerHTML = `
         <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>Dashboard de Administración</h2></header>
         <main class="dashboard-container">
@@ -117,7 +112,7 @@ async function initReportPage() {
     try {
         app.innerHTML = `<div class="loading-screen"><h1>Cargando y procesando datos del informe...</h1></div>`;
 
-        // CORRECCIÓN FINAL: Se eliminan los '../' de las rutas
+        // CORRECCIÓN FINAL Y DEFINITIVA: Se eliminan los '../' de las rutas
         const [colegiosData, nivelesData, nacionalesData, sigmaData, piData] = await Promise.all([
             fetchData('colegios.json'), 
             fetchData('data/niveles_icfes.json'), 
