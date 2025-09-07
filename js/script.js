@@ -1,106 +1,102 @@
-// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER ---
+// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V2.0 ---
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Detectar en qué página estamos para ejecutar la lógica correcta
-    if (document.getElementById('login-form')) {
-        initLoginPage();
-    }
-    if (document.getElementById('colegios-table')) {
-        initDashboardPage();
-    }
-    if (document.getElementById('report-content')) {
-        initReportPage();
+    // Router simple para cargar la vista correcta
+    const path = window.location.pathname.split("/").pop();
+
+    if (path === 'index.html' || path === '') {
+        renderLoginPage();
+    } else if (path === 'dashboard.html') {
+        renderDashboardPage();
+    } else if (path === 'reporte.html') {
+        renderReportPage();
     }
 });
 
-// --- LÓGICA DE LA PÁGINA DE LOGIN ---
-async function initLoginPage() {
-    const loginForm = document.getElementById('login-form');
-    loginForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const user = document.getElementById('user').value.trim();
-        const pass = document.getElementById('pass').value.trim();
-        const errorMessage = document.getElementById('error-message');
+// --- RENDERIZADO DE VISTAS ---
 
-        try {
-            const response = await fetch('colegios.json');
-            const data = await response.json();
-
-            // Validar Administrador
-            if (user === data.adminUser && pass === data.adminKey) {
-                errorMessage.textContent = "";
-                sessionStorage.setItem('RutaSaberUser', 'admin'); // Guardar estado de login
-                window.location.href = 'dashboard.html';
-                return;
-            }
-
-            // Validar Directivo
-            const colegio = data.colegios.find(c => c.dane === user);
-            if (colegio) {
-                const generatedPass = `${user[0]}${user.slice(-1)}${user[1]}${user.slice(-2, -1)}`;
-                if (pass === generatedPass) {
-                    errorMessage.textContent = "";
-                    sessionStorage.setItem('RutaSaberUser', colegio.dane); // Guardar DANE del colegio
-                    window.location.href = `reporte.html?dane=${colegio.dane}`;
-                    return;
-                }
-            }
-
-            errorMessage.textContent = "Usuario o clave incorrectos.";
-
-        } catch (error) {
-            errorMessage.textContent = "Error al conectar con el sistema.";
-            console.error("Error en el login:", error);
-        }
-    });
+function renderLoginPage() {
+    const app = document.getElementById('app-container');
+    app.innerHTML = `
+        <nav class="navbar">
+            <div class="logo">
+                <img src="imagenes/Logogec.png" alt="Grupo Edúcate Colombia">
+            </div>
+            <a href="#login-form" class="access-btn">Acceder</a>
+        </nav>
+        <main class="hero-section">
+            <div class="hero-content">
+                <h1 class="platform-name">Ruta <span>Saber.</span></h1>
+                <p class="subtitle">
+                    Accede a tus datos, enfócate en la meta. Identifica fortalezas y diseña planes de mejoramiento accionables para llevar a tu institución al siguiente nivel.
+                </p>
+                <form id="login-form" class="login-form">
+                    <input type="text" id="user" placeholder="Código DANE o Usuario Admin" required>
+                    <input type="password" id="pass" placeholder="Clave" required>
+                    <button type="submit">Ingresar a mi Ruta</button>
+                    <div id="error-message"></div>
+                </form>
+            </div>
+            <div class="hero-visual">
+                <img src="imagenes/fondo.png" alt="Análisis de datos educativos">
+            </div>
+        </main>
+    `;
+    setupLoginListener();
 }
 
-// --- LÓGICA DEL DASHBOARD DE ADMINISTRADOR ---
-async function initDashboardPage() {
-    if (sessionStorage.getItem('RutaSaberUser') !== 'admin') {
-        // window.location.href = 'index.html'; // Seguridad básica
-        // return;
+function renderDashboardPage() {
+    // Lógica para el dashboard
+}
+
+function renderReportPage() {
+    // Lógica para el reporte
+}
+
+
+// --- LÓGICA DE EVENTOS Y FUNCIONES ---
+
+function setupLoginListener() {
+    const loginForm = document.getElementById('login-form');
+    if (loginForm) {
+        loginForm.addEventListener('submit', handleLogin);
     }
+}
+
+async function handleLogin(event) {
+    event.preventDefault();
+    const user = document.getElementById('user').value.trim();
+    const pass = document.getElementById('pass').value.trim();
+    const errorMessage = document.getElementById('error-message');
 
     try {
         const response = await fetch('colegios.json');
+        if (!response.ok) throw new Error('Network response was not ok');
         const data = await response.json();
-        const tableBody = document.querySelector('#colegios-table tbody');
-        
-        data.colegios.sort((a, b) => a.nombre.localeCompare(b.nombre)); // Ordenar alfabéticamente
 
-        data.colegios.forEach(colegio => {
-            const row = `
-                <tr>
-                    <td>${colegio.nombre}</td>
-                    <td>${colegio.dane}</td>
-                    <td><a href="reporte.html?dane=${colegio.dane}" class="action-btn" target="_blank">Ver Informe</a></td>
-                </tr>
-            `;
-            tableBody.innerHTML += row;
-        });
+        // Validar Administrador
+        if (user === data.adminUser && pass === data.adminKey) {
+            errorMessage.textContent = "";
+            sessionStorage.setItem('RutaSaberUser', 'admin');
+            window.location.href = 'dashboard.html';
+            return;
+        }
+
+        // Validar Directivo
+        const colegio = data.colegios.find(c => c.dane === user);
+        if (colegio) {
+            const generatedPass = `${user[0]}${user.slice(-1)}${user[1]}${user.slice(-2, -1)}`;
+            if (pass === generatedPass) {
+                errorMessage.textContent = "";
+                sessionStorage.setItem('RutaSaberUser', colegio.dane);
+                window.location.href = `reporte.html?dane=${colegio.dane}`;
+                return;
+            }
+        }
+
+        errorMessage.textContent = "Usuario o clave incorrectos.";
     } catch (error) {
-        console.error("Error al cargar colegios en el dashboard:", error);
+        errorMessage.textContent = "Error del sistema. Verifique la consola.";
+        console.error("Error en el login:", error);
     }
-}
-
-// --- LÓGICA DE LA PÁGINA DE REPORTE ---
-async function initReportPage() {
-    // Lógica principal para generar el informe
-    // (Esta es una versión simplificada del motor completo que se ejecutaría)
-    
-    // Simulación: Mostrar un mensaje indicando que el motor está listo.
-    const reportContainer = document.getElementById('report-content');
-    reportContainer.innerHTML = `
-        <div style="padding: 50px; text-align: center;">
-            <h1>Motor de Informes (`script.js`) Cargado</h1>
-            <p>Este script ahora contiene toda la lógica para leer los archivos de datos y generar los informes dinámicos.</p>
-            <p>El sistema está completo y listo para ser desplegado en GitHub.</p>
-        </div>
-    `;
-
-    // NOTA: El código completo para parsear los CSV y generar cada uno de los gráficos y tablas 
-    // es extenso (más de 1000 líneas de código). La estructura que hemos definido nos permite
-    // construirlo modularmente. Este placeholder confirma que la arquitectura está lista para
-    // implementar esa lógica de procesamiento final.
 }
