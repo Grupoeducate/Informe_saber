@@ -2,16 +2,22 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname.split("/").pop();
-    if (path === 'dashboard.html') initDashboardPage();
-    else if (path === 'reporte.html') initReportPage();
-    else initLoginPage();
+    if (path === 'dashboard.html') {
+        initDashboardPage();
+    } else if (path === 'reporte.html') {
+        initReportPage();
+    } else {
+        initLoginPage();
+    }
 });
 
 async function fetchData(url) {
     const baseUrl = "/Informe_saber/";
     const finalUrl = `${baseUrl}${url}`;
     const response = await fetch(finalUrl);
-    if (!response.ok) throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
+    if (!response.ok) {
+        throw new Error(`Error al cargar ${finalUrl}: ${response.status} ${response.statusText}`);
+    }
     if (url.endsWith('.json')) return response.json();
     if (url.endsWith('.csv')) {
         const text = await response.text();
@@ -65,7 +71,24 @@ async function handleLogin(e) {
 }
 
 async function initDashboardPage() {
-    // ... (código del dashboard)
+    const app = document.getElementById('app-container');
+    app.innerHTML = `
+        <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>Dashboard de Administración</h2></header>
+        <main class="dashboard-container">
+            <h1 class="section-title">Colegios Registrados</h1>
+            <div class="table-container"><table id="colegios-table"><thead><tr><th>Nombre</th><th>DANE</th><th>Acción</th></tr></thead><tbody></tbody></table></div>
+        </main>`;
+    try {
+        const data = await fetchData('colegios.json');
+        const tableBody = document.querySelector('#colegios-table tbody');
+        data.colegios.sort((a, b) => a.nombre.localeCompare(b.nombre));
+        tableBody.innerHTML = data.colegios.map(colegio => `
+            <tr>
+                <td>${colegio.nombre}</td>
+                <td>${colegio.dane}</td>
+                <td><a href="reporte.html?dane=${colegio.dane}" class="action-btn" target="_blank">Ver Informe</a></td>
+            </tr>`).join('');
+    } catch (error) { console.error("Error en dashboard:", error); }
 }
 
 async function initReportPage() {
@@ -96,6 +119,7 @@ async function initReportPage() {
         const calcularDistribucion = (data, area, niveles) => {
             const counts = [0, 0, 0, 0];
             const rangos = niveles[area.toLowerCase()];
+            if (!rangos) return [0,0,0,0];
             data.forEach(student => {
                 const puntaje = student[area.toUpperCase()];
                 if (puntaje <= rangos[0].max) counts[0]++;
@@ -103,7 +127,7 @@ async function initReportPage() {
                 else if (puntaje <= rangos[2].max) counts[2]++;
                 else counts[3]++;
             });
-            return counts.map(count => Math.round((count / data.length) * 100));
+            return data.length > 0 ? counts.map(count => Math.round((count / data.length) * 100)) : [0,0,0,0];
         };
         
         const navLinks = areaKeys.map(key => `<a href="#desglose-${key}">${key.replace(/_/g, ' ')}</a>`).join('');
@@ -111,6 +135,11 @@ async function initReportPage() {
             <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>${colegioInfo.nombre.toUpperCase()} | Informe Directivo</h2></header>
             <nav class="report-nav"><a href="#resumen">Resumen</a><a href="#panorama">Panorama</a><a href="#areas">Áreas</a><a href="#estudiantes">Estudiantes</a>${navLinks}</nav>
             <main>
+                <section id="portada" class="cover-section">
+                     <h1 class="platform-name">Ruta <span>Saber.</span></h1>
+                     <h3>${colegioInfo.nombre}</h3>
+                     <div class="group-name" style="border-color: var(--accent-color); color: var(--accent-color);">${sigmaData[0]?.GRUPO || 'Grupo 11'}</div>
+                </section>
                 <section id="resumen"><h2 class="section-title">Resumen Ejecutivo</h2>
                     <div class="grid-layout grid-2-cols">
                         <div class="summary-box"><h3 style="color:var(--accent-color); border-color:var(--accent-color);">Evolución General</h3><p>El grupo muestra una evolución de <strong class="${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL) >= 0 ? 'evo-pos' : 'evo-neg'}">${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL).toFixed(1)} puntos</strong>.</p></div>
@@ -158,7 +187,7 @@ async function initReportPage() {
         }).render();
 
         areaKeys.forEach(areaKey => {
-            const distColegio = calcularDistribucion(piData, areaKey, nivelesData);
+            const distColegio = calcularDistribucion(piData, areaKey.toUpperCase(), nivelesData);
             const distNalA = Object.values(nacionalesData.distribucion_niveles['2024'].calendario_a[areaKey]).slice(0,4);
             const distNalB = Object.values(nacionalesData.distribucion_niveles['2024'].calendario_b[areaKey]).slice(0,4);
             new ApexCharts(document.querySelector(`#dist-${areaKey}`), {
