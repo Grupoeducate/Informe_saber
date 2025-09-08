@@ -1,4 +1,4 @@
-// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V14.0 (FINAL Y VERIFICADO) ---
+// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V14.0 (FINAL Y COMPLETO) ---
 
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname.split("/").pop();
