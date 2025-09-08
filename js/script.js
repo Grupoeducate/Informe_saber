@@ -1,10 +1,14 @@
-// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V14.0 (FINAL Y COMPLETO) ---
+// --- PROMPT MAESTRO V3.0 - SCRIPT DE LA PLATAFORMA RUTA SABER V14.0 (FINAL Y VERIFICADO) ---
 
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname.split("/").pop();
-    if (path === 'dashboard.html') initDashboardPage();
-    else if (path === 'reporte.html') initReportPage();
-    else initLoginPage();
+    if (path === 'dashboard.html') {
+        initDashboardPage();
+    } else if (path === 'reporte.html') {
+        initReportPage();
+    } else {
+        initLoginPage();
+    }
 });
 
 async function fetchData(url) {
@@ -110,12 +114,30 @@ async function initReportPage() {
         const mergedData = piData.map(studentPi => ({ ...studentPi, EVOLUCION: studentPi.PUNTAJE_GLOBAL - (sigmaData.find(s => s.ID_ESTUDIANTE === studentPi.ID_ESTUDIANTE)?.PUNTAJE_GLOBAL || studentPi.PUNTAJE_GLOBAL) }));
         const top10Destacados = [...mergedData].sort((a, b) => b.PUNTAJE_GLOBAL - a.PUNTAJE_GLOBAL).slice(0, 10);
         const top5Prioritarios = [...mergedData].sort((a, b) => a.PUNTAJE_GLOBAL - b.PUNTAJE_GLOBAL).slice(0, 5);
+        const calcularDistribucion = (data, area, niveles) => {
+            const counts = [0, 0, 0, 0];
+            const rangos = niveles[area.toLowerCase()];
+            if (!rangos || data.length === 0) return [0,0,0,0];
+            data.forEach(student => {
+                const puntaje = student[area.toUpperCase()];
+                if (puntaje <= rangos[0].max) counts[0]++;
+                else if (puntaje <= rangos[1].max) counts[1]++;
+                else if (puntaje <= rangos[2].max) counts[2]++;
+                else counts[3]++;
+            });
+            return counts.map(count => Math.round((count / data.length) * 100));
+        };
         
         const navLinks = areaKeys.map(key => `<a href="#desglose-${key}">${key.replace(/_/g, ' ')}</a>`).join('');
         app.innerHTML = `
             <header class="report-header"><img src="imagenes/Logogec.png" alt="Logo"><h2>${colegioInfo.nombre.toUpperCase()} | Informe Directivo</h2></header>
             <nav class="report-nav"><a href="#resumen">Resumen</a><a href="#panorama">Panorama</a><a href="#areas">Áreas</a><a href="#estudiantes">Estudiantes</a>${navLinks}</nav>
             <main>
+                <section id="portada" class="cover-section">
+                     <h1 class="platform-name">Ruta <span>Saber.</span></h1>
+                     <h3>${colegioInfo.nombre}</h3>
+                     <div class="group-name" style="border-color: var(--accent-color); color: var(--accent-color);">${sigmaData[0]?.GRUPO || 'Grupo 11'}</div>
+                </section>
                 <section id="resumen"><h2 class="section-title">Resumen Ejecutivo</h2>
                     <div class="grid-layout grid-2-cols">
                         <div class="summary-box"><h3 style="color:var(--accent-color); border-color:var(--accent-color);">Evolución General</h3><p>El grupo muestra una evolución de <strong class="${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL) >= 0 ? 'evo-pos' : 'evo-neg'}">${(promediosPi.PUNTAJE_GLOBAL - promediosSigma.PUNTAJE_GLOBAL).toFixed(1)} puntos</strong>.</p></div>
@@ -135,13 +157,62 @@ async function initReportPage() {
                 </section>
                 ${areaKeys.map(areaKey => {
                     const areaTitle = areaKey.replace(/_/g, ' ');
-                    return `<section id="desglose-${areaKey}"><h2 class="section-title" style="color:${nivelesData.colores_areas[areaKey]}; border-color:${nivelesData.colores_areas[areaKey]}">Desglose: ${areaTitle}</h2><div class="desglose-layout"><div class="charts-column"><div class="panel"><h4>Nivel de Desempeño Institucional vs. Nacional 2024</h4><div class="chart-container" id="bullet-${areaKey}"></div></div><div class="panel"><h4>Distribución de Estudiantes por Nivel (%)</h4><div class="chart-container" id="dist-${areaKey}"></div></div></div><div class="analysis-column"><div class="analysis-box"><h4>Análisis y Recomendaciones</h4><p>Análisis detallado para ${areaTitle} irá aquí...</p></div><a href="Rutas_areas/Ruta ${areaTitle}.pdf" target="_blank" class="recommendation-btn" style="background-color:${nivelesData.colores_areas[areaKey]}">Consultar Ruta de Mejoramiento</a></div></div></section>`;
+                    return `<section id="desglose-${areaKey}">
+                        <h2 class="section-title" style="color:${nivelesData.colores_areas[areaKey]}; border-color:${nivelesData.colores_areas[areaKey]}">Desglose: ${areaTitle}</h2>
+                        <div class="desglose-layout">
+                            <div class="charts-column">
+                                <div class="panel"><h4>Nivel de Desempeño Institucional vs. Nacional 2024</h4><div class="chart-container" id="bullet-${areaKey}"></div></div>
+                                <div class="panel"><h4>Distribución de Estudiantes por Nivel (%)</h4><div class="chart-container" id="dist-${areaKey}"></div></div>
+                            </div>
+                            <div class="analysis-column">
+                                <div class="analysis-box"><h4>Análisis y Recomendaciones</h4><p>Análisis detallado para ${areaTitle} irá aquí...</p></div>
+                                <a href="Rutas_areas/Ruta ${areaTitle}.pdf" target="_blank" class="recommendation-btn" style="background-color:${nivelesData.colores_areas[areaKey]}">Consultar Ruta de Mejoramiento</a>
+                            </div>
+                        </div>
+                    </section>`;
                 }).join('')}
             </main>
             <footer class="report-footer">Informe generado por: Dirección de Pedagogía - Marlon Galvis V.</footer>`;
 
-        // --- RENDERIZADO DE GRÁFICOS ---
-        // (código de renderizado completo)
+        new ApexCharts(document.querySelector("#evolucionChart"), {
+            series: [{ name: 'Puntaje Global', data: [promediosSigma.PUNTAJE_GLOBAL.toFixed(1), promediosPi.PUNTAJE_GLOBAL.toFixed(1)] }],
+            chart: { type: 'line', height: 350, fontFamily: 'Barlow Condensed', toolbar: { show: false } },
+            stroke: { curve: 'smooth', width: 4 }, markers: { size: 6 }, dataLabels: { enabled: true },
+            xaxis: { categories: ['Prueba Inicial (Sigma)', 'Prueba Final (PI)'] }, yaxis: { title: { text: 'Puntaje Global' } },
+            annotations: { yaxis: [{ y: nacionalesData.promedios['2024'].calendario_a.global, borderColor: '#fd7e14', label: { text: `Prom. Nal. Cal A 2024: ${nacionalesData.promedios['2024'].calendario_a.global}` } }] },
+            colors: [getComputedStyle(document.documentElement).getPropertyValue('--accent-color')]
+        }).render();
+
+        areaKeys.forEach(areaKey => {
+            const distColegio = calcularDistribucion(piData, areaKey.toUpperCase(), nivelesData);
+            const distNalA = Object.values(nacionalesData.distribucion_niveles['2024'].calendario_a[areaKey]).slice(0,4);
+            const distNalB = Object.values(nacionalesData.distribucion_niveles['2024'].calendario_b[areaKey]).slice(0,4);
+            new ApexCharts(document.querySelector(`#dist-${areaKey}`), {
+                series: [{ name: 'Institución', data: distColegio }, { name: 'Nacional Cal. A', data: distNalA }, { name: 'Nacional Cal. B', data: distNalB }],
+                chart: { type: 'bar', height: 350 }, plotOptions: { bar: { horizontal: false, columnWidth: '80%', } },
+                dataLabels: { enabled: true, formatter: (val) => val + '%' },
+                xaxis: { categories: ['Nivel 1', 'Nivel 2', 'Nivel 3', 'Nivel 4'] },
+                colors: [nivelesData.colores_areas[areaKey], '#A9A9A9', '#424242'], legend: { position: 'top' }
+            }).render();
+            
+            const nivelesArea = nivelesData[areaKey];
+            new ApexCharts(document.querySelector(`#bullet-${areaKey}`), {
+                chart: { type: 'bar', height: 200, stacked: true, toolbar: { show: false } },
+                series: [{ name: 'Rangos', data: nivelesArea.map(n => ({ x: n.nivel.split(' ')[0], y: n.max - n.min, fillColor: n.color })) }],
+                plotOptions: { bar: { horizontal: true, barHeight: '50%', dataLabels: { position: 'center' } } },
+                xaxis: { categories: [''], min: 0, max: 100, labels: { show: true } },
+                yaxis: { show: false }, grid: { show: false, xaxis: { lines: { show: true } } }, legend: { show: false },
+                dataLabels: { enabled: true, formatter: (val, opt) => opt.w.config.series[opt.seriesIndex].data[opt.dataPointIndex].x, style: { colors: ['#fff'], fontSize: '12px', fontWeight: 600 } },
+                annotations: {
+                    points: [{ x: promediosPi[areaKey.toUpperCase()], y: 0, label: { text: `Inst: ${promediosPi[areaKey.toUpperCase()].toFixed(1)}` }, marker: { size: 6, fillColor: '#000' } }],
+                    xaxis: [
+                        { x: nacionalesData.promedios['2024'].calendario_a[areaKey], strokeDashArray: 2, borderColor: '#775DD0', label: { text: `Nal. A: ${nacionalesData.promedios['2024'].calendario_a[areaKey]}` } },
+                        { x: nacionalesData.promedios['2024'].calendario_b[areaKey], strokeDashArray: 2, borderColor: '#FF4560', label: { text: `Nal. B: ${nacionalesData.promedios['2024'].calendario_b[areaKey]}` } }
+                    ]
+                },
+                tooltip: { enabled: false }
+            }).render();
+        });
 
     } catch (error) {
         console.error("Error fatal al generar el informe:", error);
