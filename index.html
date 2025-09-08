@@ -5,18 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ruta Saber | Grupo Edúcate Colombia</title>
     <link rel="stylesheet" href="css/style.css">
-    <!-- Librerías para que todo funcione -->
     <script src="https://cdn.jsdelivr.net/npm/papaparse@5.3.2/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
 </head>
 <body>
     <!-- El script construirá toda la aplicación dentro de este contenedor -->
     <div id="app-container">
-        <!-- Pantalla de carga inicial -->
         <div class="loading-screen"><h1>Iniciando Plataforma Ruta Saber...</h1></div>
     </div>
 
-    <!-- El motor de la aplicación -->
-    <script src="js/script.js"></script>
+    <!-- CORRECCIÓN FINAL: El atributo 'defer' asegura que el script se ejecute solo después de que toda la página esté lista -->
+    <script src="js/script.js" defer></script>
 </body>
 </html>
