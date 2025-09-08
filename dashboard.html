@@ -7,10 +7,30 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <!-- Contenedor principal para la aplicación -->
-    <div id="app-container">
-        <!-- El script generará el contenido aquí -->
-    </div>
+    <header class="report-header">
+        <img src="imagenes/Logogec.png" alt="Logo Grupo Edúcate Colombia">
+        <h2>Dashboard de Administración</h2>
+    </header>
+    <main class="dashboard-container">
+        <h1 class="section-title">Colegios Registrados</h1>
+        <div class="table-container">
+            <table id="colegios-table">
+                <thead>
+                    <tr>
+                        <th>Nombre del Colegio</th>
+                        <th>Código DANE</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="colegios-table-body">
+                    <!-- Las filas de los colegios serán insertadas aquí por el script -->
+                    <tr>
+                        <td colspan="3" style="text-align: center;">Cargando lista de colegios...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
     <script src="js/script.js"></script>
 </body>
 </html>
